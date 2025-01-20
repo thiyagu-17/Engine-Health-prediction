@@ -1,0 +1,97 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.tree import export_graphviz
+from IPython.display import Image
+from imblearn.over_sampling import SMOTE
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+import graphviz
+import random
+data_path = "C:/Users/thiya/OneDrive/Documents/engine_data.csv"
+data = pd.read_csv(data_path)
+data.info()
+data.head()
+
+#RPM
+sns.histplot(data[data['Engine Condition']==0]['Engine rpm'], color='red')
+sns.histplot(data[data['Engine Condition']==1]['Engine rpm'], color='blue')
+plt.legend(labels=["Engine Condition = 0", "Engine Condition = 1"])
+plt.title('Engine rpm', fontsize=18);
+
+#oil pressure
+sns.histplot(data[data['Engine Condition']==0]['Lub oil pressure'], color='red')
+sns.histplot(data[data['Engine Condition']==1]['Lub oil pressure'], color='blue')
+plt.legend(labels=["Engine Condition = 0", "Engine Condition = 1"])
+plt.title('Lub oil pressure', fontsize=18);
+
+#oil temparature
+sns.histplot(data[data['Engine Condition']==0]['lub oil temp'], color='red')
+sns.histplot(data[data['Engine Condition']==1]['lub oil temp'], color='blue')
+plt.legend(labels=["Engine Condition = 0", "Engine Condition = 1"])
+plt.title('lub oil temp', fontsize=18);
+
+#fuel pressure
+sns.histplot(data[data['Engine Condition']==0]['Fuel pressure'], color='red')
+sns.histplot(data[data['Engine Condition']==1]['Fuel pressure'], color='blue')
+plt.legend(labels=["Engine Condition = 0", "Engine Condition = 1"])
+plt.title('Fuel pressure', fontsize=18);
+
+#cooolant pressure
+
+sns.histplot(data[data['Engine Condition']==0]['Coolant pressure'], color='red')
+sns.histplot(data[data['Engine Condition']==1]['Coolant pressure'], color='blue')
+plt.legend(labels=["Engine Condition = 0", "Engine Condition = 1"])
+plt.title('Coolant pressure', fontsize=18);
+
+#coolant temparature
+sns.histplot(data[data['Engine Condition']==0]['Coolant temp'], color='red')
+sns.histplot(data[data['Engine Condition']==1]['Coolant temp'], color='blue')
+plt.legend(labels=["Engine Condition = 0", "Engine Condition = 1"])
+plt.title('Coolant temp', fontsize=18);
+
+sns.histplot(data['Engine Condition'])
+plt.title('Engine Condition', fontsize=18);
+
+corr = data.corr()
+corr
+X = data.drop('Engine Condition', axis=1)
+y = data['Engine Condition']
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+X_validation, X_test, y_validation, y_test = train_test_split(X_test, y_test, test_size=0.15, random_state=42)
+     
+print("train set shape:")
+print(X_train.shape)
+
+print("validation set shape:")
+print(X_validation.shape)
+
+print("test set shape:")
+print(X_test.shape)
+
+data = []
+label = ["0", "1"]
+
+for classNum in range(len(label)):
+  data.append(np.sum(np.array(y_train) == classNum)) 
+
+plt.title("Training set labels", fontsize=15)
+plt.pie(data, labels=label, shadow=True, autopct='%1.1f%%')
+plt.show()
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay
+model = RandomForestClassifier()
+model.fit(X_train, y_train)
+y_pred = clf.predict(X_test)
+
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+
+print("Accuracy:", accuracy)
+print("Precision:", precision)
+print("Recall:", recall)
+     
